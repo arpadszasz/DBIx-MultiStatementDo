@@ -2,20 +2,21 @@
 package DBIx::MultiStatementDo;
 ## use critic
 
-use Moose;
+use Moo;
+use Types::Standard qw(Bool HashRef InstanceOf Maybe);
 use Carp qw(croak);
 
 use SQL::SplitStatement 1.00009;
 
 has 'dbh' => (
     is       => 'rw',
-    isa      => 'DBI::db',
+    isa      => InstanceOf['DBI::db'],
     required => 1
 );
 
 has 'splitter_options' => (
     is      => 'rw',
-    isa     => 'Maybe[HashRef[Bool]]',
+    isa     => Maybe[HashRef[Bool]],
     trigger => \&_set_splitter,
     default => undef
 );
@@ -27,7 +28,7 @@ sub _set_splitter {
 
 has '_splitter' => (
     is      => 'rw',
-    isa     => 'SQL::SplitStatement',
+    isa     => InstanceOf['SQL::SplitStatement'],
     handles => [ qw(split split_with_placeholders) ],
     lazy    => 1,
     default => sub { SQL::SplitStatement->new }
@@ -35,7 +36,7 @@ has '_splitter' => (
 
 has 'rollback' => (
     is      => 'rw',
-    isa     => 'Bool',
+    isa     => Bool,
     default => 1
 );
 
@@ -106,9 +107,6 @@ sub _do_statements {
     
     return @results
 }
-
-no Moose;
-__PACKAGE__->meta->make_immutable;
 
 1;
 
@@ -469,7 +467,7 @@ DBIx::MultiStatementDo depends on the following modules:
 
 =item * L<SQL::SplitStatement> 0.10000 or newer
 
-=item * L<Moose>
+=item * L<Moo>
 
 =back
 
